@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="shortcut icon" href="logoOCTO 1.png" type="image/x-icon">
+  <title>QRCode</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#33ffcc" />
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+  <script src="app.js"></script>
+  <div class="home-container">
+    <h1>
+      <img class="left-image" src="octo.svg" />
+      <div class="left-text">QRCode
+        <span class="right-text">Configuração de Dados</span>
+
+      </div>
+      <img class="right-image" src="qr.png" />
+    </h1>
+    <h2>
+      <nav id="menu">
+        <div class="topnav" id="myTopnav">
+          <a><br></a>
+        </div>
+      </nav>
+    </h2>
+    <h3>
+      <div id="scrollButtons">
+        <button id="scrollUp" style="display: none;">↑</button>
+        <button id="scrollDown" style="display: none;">↓</button>
+      </div>
+      <form id="setwifi" name="setwifi">
+        <table>
+          <tr>
+          </tr>
+          <tr>
+            <th class="thbase" rowspan="5">Admin</th>
+          </tr>
+          <tr>
+            <td>
+              <label>Modo:</label>
+              <br>
+              <div>
+                <input type="radio" id="master" name="mod" onclick="Type_modulo()" value="1" checked />
+                <label for="master">MASTER</label>
+                <br>
+                <input type="radio" id="slave" name="mod" onclick="Type_modulo()" value="0" />
+                <label for="slave">SLAVE</label>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label>Módulo:</label>
+              <input type="text" id="name" name="name" value="#name#" maxlength="15" required />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label>Login:</label>
+              <input type="text" id="login" name="login" value="#login#" maxlength="15" required />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label>Senha:</label>
+              <input type="password" id="pass" name="pass" value="#pass#" size="17" minlength="8" maxlength="15"
+                required />
+              <label onclick="ver('pass')">&#128065;</label>
+            </td>
+          </tr>
+          <tr id="text_label">
+            <th class="thbase" rowspan="9" id="text">Rede</th>
+          </tr>
+          <tr id="rede_label">
+            <td>
+              <label>Rede:</label>
+              <br>
+              <div>
+                <input type="radio" id="wifi" name="connection" value="1" onclick="Type_rede()" checked />
+                <label for="wifi">WiFi</label>
+                <br>
+                <input type="radio" id="eth" name="connection" value="0" onclick="Type_rede()" />
+                <label for="eth">Ethernet</label>
+              </div>
+            </td>
+          </tr>
+          <tr id="ssid_label">
+            <td>
+              <label>SSID:</label>
+              <input type="text" id="ssid" name="ssid" value="#ssid#" maxlength="29" required />
+            </td>
+          </tr>
+          <tr id="pass_label">
+            <td>
+              <label>Senha:</label>
+              <input type="password" id="password" name="password" value="#password#" size="17" minlength="8"
+                maxlength="15" required />
+              <label onclick="ver('password')">&#128065;</label>
+            </td>
+          </tr>
+          <tr id="dhcp_label">
+            <td>
+              <label>DHCP:</label>
+              <input type="checkbox" id="dhcp" name="dhcp" #dhc_state# value="1"
+                onchange="check_dhcp(this,'ip','nm','gw','dns')" />
+            </td>
+          </tr>
+          <tr id="ip_label">
+            <td>
+              <label>Endereço:</label>
+              <input type="text" id="ip" name="ip" value="#ip#" required>
+            </td>
+          </tr>
+          <tr id="class_label">
+            <td>
+              <label>Classe:</label>
+              <input type="text" id="nm" name="nm" value="#nm#" required>
+            </td>
+          </tr>
+          <tr id="gtw_label">
+            <td>
+              <label>Gateway:</label>
+              <input type="text" id="gw" name="gw" value="#gw#" required>
+            </td>
+          </tr>
+          <tr id="dns_label">
+            <td>
+              <label>DNS:</label>
+              <input type="text" id="dns" name="dns" value="#dns#" required>
+            </td>
+          </tr>
+          <tr>
+          </tr>
+        </table>
+      </form>
+      <table>
+        <tr>
+          <th style="text-align: center;">
+            <button class="button" id="btnsave" onclick="save()">Salvar</button>
+          </th>
+        </tr>
+        <tr>
+          <th class="thmsg" id="message"></th>
+        </tr>
+      </table>
+    </h3>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>
