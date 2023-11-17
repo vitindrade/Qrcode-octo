@@ -2,8 +2,8 @@
     "theme_color": "#5b3082",
     "background_color": "#000000",
     "display": "standalone",
-    "scope": "/Qrcode-octo/",
-    "start_url": "/Qrcode-octo/",
+    "scope": "/pagina_qrcode",
+    "start_url": "/pagina_qrcode",
     "name": "QRCode",
     "short_name": "QRCode",
     "icons": [

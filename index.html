@@ -5,11 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="shortcut icon" href="logoOCTO 1.png" type="image/x-icon">
+  <link rel="shortcut icon" href="icon-512x512.png" type="image/x-icon">
   <title>QRCode</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#33ffcc" />
   <link href="style.css" rel="stylesheet">
+  <script type="text/javascript" src="jquery.min.js"></script>
+  <script type="text/javascript" src="qrcode.js"></script>
 </head>
 
 <body>
@@ -26,7 +28,15 @@
     <h2>
       <nav id="menu">
         <div class="topnav" id="myTopnav">
-          <a><br></a>
+          <a>
+            <div class="pwa">
+              <button class="button" id='installButton'>Instalar o App</button>
+              <p id="iosInstallText" style="display:none; text-align: center;">
+                Para uma melhor experiência, adicione este aplicativo à sua tela inicial. Toque no botão de
+                compartilhamento e selecione 'Adicionar à Tela Inicial'.
+              </p>
+            </div>
+          </a>
         </div>
       </nav>
     </h2>
@@ -35,12 +45,28 @@
         <button id="scrollUp" style="display: none;">↑</button>
         <button id="scrollDown" style="display: none;">↓</button>
       </div>
-      <form id="setwifi" name="setwifi">
+      <form id="setqrcode" name="setqrcode">
         <table>
           <tr>
           </tr>
           <tr>
-            <th class="thbase" rowspan="5">Admin</th>
+            <th class="thbase" rowspan="3">Admin</th>
+          </tr>
+          <tr>
+            <td>
+              <label>Login:</label>
+              <input type="text" id="login" name="login" maxlength="15" required />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label>Senha:</label>
+              <input type="password" id="pass" name="pass" size="17" minlength="8" maxlength="15" required />
+              <label onclick="ver('pass')">&#128065;</label>
+            </td>
+          </tr>
+          <tr>
+            <th class="thbase" rowspan="3">Device</th>
           </tr>
           <tr>
             <td>
@@ -57,22 +83,8 @@
           </tr>
           <tr>
             <td>
-              <label>Módulo:</label>
-              <input type="text" id="name" name="name" value="#name#" maxlength="15" required />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label>Login:</label>
-              <input type="text" id="login" name="login" value="#login#" maxlength="15" required />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label>Senha:</label>
-              <input type="password" id="pass" name="pass" value="#pass#" size="17" minlength="8" maxlength="15"
-                required />
-              <label onclick="ver('pass')">&#128065;</label>
+              <label>Nome:</label>
+              <input type="text" id="name" name="name" maxlength="15" required />
             </td>
           </tr>
           <tr id="text_label">
@@ -94,14 +106,13 @@
           <tr id="ssid_label">
             <td>
               <label>SSID:</label>
-              <input type="text" id="ssid" name="ssid" value="#ssid#" maxlength="29" required />
+              <input type="text" id="ssid" name="ssid" maxlength="29" required />
             </td>
           </tr>
           <tr id="pass_label">
             <td>
               <label>Senha:</label>
-              <input type="password" id="password" name="password" value="#password#" size="17" minlength="8"
-                maxlength="15" required />
+              <input type="password" id="password" name="password" size="17" minlength="8" maxlength="15" required />
               <label onclick="ver('password')">&#128065;</label>
             </td>
           </tr>
@@ -115,25 +126,25 @@
           <tr id="ip_label">
             <td>
               <label>Endereço:</label>
-              <input type="text" id="ip" name="ip" value="#ip#" required>
+              <input type="text" id="ip" name="ip" required>
             </td>
           </tr>
           <tr id="class_label">
             <td>
               <label>Classe:</label>
-              <input type="text" id="nm" name="nm" value="#nm#" required>
+              <input type="text" id="nm" name="nm" required>
             </td>
           </tr>
           <tr id="gtw_label">
             <td>
               <label>Gateway:</label>
-              <input type="text" id="gw" name="gw" value="#gw#" required>
+              <input type="text" id="gw" name="gw" required>
             </td>
           </tr>
           <tr id="dns_label">
             <td>
               <label>DNS:</label>
-              <input type="text" id="dns" name="dns" value="#dns#" required>
+              <input type="text" id="dns" name="dns" required>
             </td>
           </tr>
           <tr>
@@ -142,17 +153,89 @@
       </form>
       <table>
         <tr>
+          <th class="thmsg" id="message"></th>
+        </tr>
+        <tr>
           <th style="text-align: center;">
             <button class="button" id="btnsave" onclick="save()">Salvar</button>
           </th>
         </tr>
-        <tr>
-          <th class="thmsg" id="message"></th>
-        </tr>
       </table>
+      <div class="qr">
+        <div id="qrcode"></div>
+      </div>
     </h3>
   </div>
+
   <script src="script.js"></script>
+
+
+  <script>
+    let deferredInstallPrompt;
+
+    function isIOSDevice() {
+      // Verifica se contém "iPhone", "iPad" ou "iPod"
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      // Verifica se o navegador é o Safari
+      var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+      // Retorna true se for um dispositivo iOS e estiver no Safari
+      return isIOS && isSafari;
+    }
+
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/pagina_qrcode/sw.js')
+          .then(registration => {
+            console.log('Service Worker registrado com sucesso:', registration);
+          })
+          .catch(error => {
+            console.error('Erro ao registrar o Service Worker:', error);
+          });
+      });
+
+      window.addEventListener('beforeinstallprompt', (event) => {
+        // Verifica se é um iPhone
+
+        // Mostra o botão de instalação apenas para dispositivos Android
+        if (!isIOSDevice()) {
+          document.getElementById('installButton').style.display = 'center';
+
+          // Previne a instalação automática
+          event.preventDefault();
+
+          // Armazena o evento para uso posterior
+          deferredInstallPrompt = event;
+
+          document.getElementById('installButton').addEventListener('click', () => {
+            // Exibe o banner de instalação
+            deferredInstallPrompt.prompt();
+
+            // Aguarda o usuário responder
+            deferredInstallPrompt.userChoice.then((choiceResult) => {
+              if (choiceResult.outcome === 'accepted') {
+                console.log('Usuário aceitou a instalação');
+                document.getElementById('installButton').style.display = 'none';
+              } else {
+                console.log('Usuário recusou a instalação');
+              }
+
+              // Limpa a referência ao evento
+              deferredInstallPrompt = null;
+            });
+          });
+        }
+      });
+    }
+
+
+    // Mostra o banner informativo para usuários iOS
+    if (isIOSDevice()) {
+      document.getElementById('installButton').style.display = 'none';
+      document.getElementById('iosInstallText').style.display = 'block';
+    }
+  </script>
 </body>
 
 </html>
